@@ -933,7 +933,7 @@ this.enemyArray.push(this.octoKnight);
     }
     wave5(){
         let my = this.my;
-        this.text1.setText("Wave IV : \n Boss: King Side Castle");
+        this.text1.setText("Wave V : \n Boss: King Side Castle");
         for(let i = 0; i <= 1; i++){
             let pawn = my.sprite.pawnGroup.getFirstDead();
             if(pawn != null){
