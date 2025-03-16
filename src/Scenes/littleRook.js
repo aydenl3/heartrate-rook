@@ -24,6 +24,10 @@ class littleRook extends Phaser.Scene {
         this.score = 0;
         this.enemyArray = [];
         this.gameOn = true;
+        this.jitter = false;
+        this.jitterCooldownCounter = 0;
+        this.jitterCooldown = 10;
+        this.heartrate = 60;
 
     }
 
@@ -200,7 +204,7 @@ this.enemyArray.push(this.octoKnight);
         //console.log(this.enemyArray[2]);
 //----------------------------------------------------------------------------------------------
 //KINGSIDE CASTLE
-        my.sprite.kingsideCastle = this.add.sprite(400,50,"chess_rook");
+        my.sprite.kingsideCastle = this.add.sprite(400,50,"chess_knight");
         this.Castle = {
             sprite: my.sprite.kingsideCastle,
             name: "Kingside Castle",
@@ -219,7 +223,7 @@ this.enemyArray.push(this.octoKnight);
         my.sprite.kingsideCastle.active = false;
         my.sprite.kingsideCastle.setScale(this.Castle.scale);
 //-------------------------------------------------------------------------------------------------
-
+//////
         // Create key objects
         this.left = this.input.keyboard.addKey("A");
         this.right = this.input.keyboard.addKey("D");
@@ -306,6 +310,7 @@ this.enemyArray.push(this.octoKnight);
     update() {
 
         let my = this.my;
+        this.checkJitter();
         this.decrementCounters();
         this.enemyShoot();
         if(this.wave == 5){
@@ -315,10 +320,7 @@ this.enemyArray.push(this.octoKnight);
                 
                 this.Castle.behavCooldownCounter = this.Castle.behavCooldown;
                 this.Castle.behav = Math.floor(Math.random() * 4);
-                //console.log(this.Castle.behav);
-            }
-            if(this.Castle.behavCooldownCounter <= 1){
-                //this.bossAttackSummon();
+                this.pawnSpeed = Math.floor(Math.random() * 3) + 2;
                 //console.log(this.Castle.behav);
             }
             if(this.Castle.behav == 1){
@@ -540,6 +542,29 @@ this.enemyArray.push(this.octoKnight);
         return true;
     }
 
+    checkJitter(){
+        if (Phaser.Input.Keyboard.JustDown(this.left) || Phaser.Input.Keyboard.JustDown(this.right) || Phaser.Input.Keyboard.JustDown(this.space)){
+            this.heartrate += 5
+        }
+        else if (this.heartrate > 60){
+            this.heartrate -= 0.2
+        }
+        if (this.heartrate <= 80){  
+            this.my.sprite.kingsideCastle.setTexture("chess_knight");
+            //this.my.sprite.kingsideCastle.setTint(0);
+        }
+        else if(this.heartrate <= 100){
+            this.my.sprite.kingsideCastle.setTexture("chess_bishop");
+        }
+        else if (this.heartrate <= 140){
+            this.my.sprite.kingsideCastle.setTexture("chess_rook");
+        }
+        else if (this.heartrate <= 180){
+            this.my.sprite.kingsideCastle.setTexture("chess_queen");
+        }
+        console.log(this.my.sprite.kingsideCastle.texture);
+    }
+
     loseHP(){
         if(this.hpCooldownCounter <= 0){
             this.sound.play("ouch");
@@ -641,7 +666,7 @@ this.enemyArray.push(this.octoKnight);
         this.hpCooldown = 40;
         this.hpCooldownCounter = 0;
 
-        this.wave = 0;
+        this.wave = 5;
         this.empty = true;
         this.waveCount = 100;
         this.hp = 3;
@@ -752,184 +777,6 @@ this.enemyArray.push(this.octoKnight);
         let my = this.my;
         this.text1.setText("Press Space to Shoot \nPress A to Move Left \nPress D to Move Right");
         this.empty=false;
-    }
-    wave0(){
-        let my = this.my;
-        this.text1.setText("Wave I : \n Opening");
-        for(let i = 0; i <= 3; i++){
-            let pawn = my.sprite.pawnGroup.getFirstDead();
-            if(pawn != null){
-                //console.log(pawn);
-                pawn.makeActive();
-                pawn.x = game.config.width/3 + 75*i;
-                pawn.y = 30;
-                //console.log(i);
-            }
-
-        }
-        this.waveKnight.sprite.x = this.knightWavePath.points[0].x;
-        this.waveKnight.sprite.y = this.knightWavePath.points[0].y;
-        this.waveKnight.sprite.visible = true;
-        this.waveKnight.sprite.active = true;
-        this.waveKnight.hp = this.waveKnight.maxhp;
-        this.waveKnight.atkCooldownCounter = this.waveKnight.atkCooldown;
-        this.waveKnight.sprite.startFollow({
-           from: 0,
-           to: 1,
-           delay: 0,
-           duration: 4000,
-           ease: 'Sine.easeInOut',
-           repeat: -1,
-           yoyo: true,
-           rotateToPath: false,
-           rotationOffset: -90
-          })
-        this.empty=false;
-
-    }
-    wave1(){
-        let my = this.my;
-        this.text1.setText("Wave II : \n Passed Pawns");
-        for(let i = 0; i <= 6; i++){
-            let pawn = my.sprite.pawnGroup.getFirstDead();
-            if(pawn != null){
-                //console.log(pawn);
-                pawn.makeActive();
-                pawn.x = game.config.width/8 + 75*i;
-                pawn.y = 30;
-                //console.log(pawn);
-                if (i == 6 || i == 5 || i == 1 || i == 0){
-                    pawn.y = 400;
-                }
-                //console.log(i);
-            }
-
-        }
-        this.empty=false;
-
-    }
-    wave2(){
-        let my = this.my;
-        this.text1.setText("Wave III : \n Fiancetto");
-        for(let i = 0; i <= 3; i++){
-            let pawn = my.sprite.pawnGroup.getFirstDead();
-            if(pawn != null){
-                //console.log(pawn);
-                pawn.makeActive();
-                pawn.x = game.config.width/2+20 + 85*i;
-                pawn.y = 50;
-                //console.log(pawn);
-                if (i == 2){
-                    pawn.y = 120;
-                }
-                //console.log(i);
-            }
-
-        }
-        this.diamondBishop.sprite.x = this.bishopDiamondPath.points[0].x;
-        this.diamondBishop.sprite.y = this.bishopDiamondPath.points[0].y;
-        this.diamondBishop.sprite.visible = true;
-        this.diamondBishop.sprite.active = true;
-        this.diamondBishop.hp = this.diamondBishop.maxhp;
-        this.diamondBishop.atkCooldownCounter = this.diamondBishop.atkCooldown;
-        this.diamondBishop.sprite.startFollow({
-           from: 0,
-           to: 1,
-           delay: 0,
-           duration: 8000,
-           ease: 'Sine.easeInOut',
-           repeat: -1,
-           yoyo: true,
-           rotateToPath: false,
-           rotationOffset: -90
-          })
-        this.empty=false;
-
-    }
-    wave3(){
-        let my = this.my;
-        this.text1.setText("Wave IV : \n Pawnstorm");
-        for(let i = 0; i <= 14; i++){
-            let pawn = my.sprite.pawnGroup.getFirstDead();
-            if(pawn != null){
-                //console.log(pawn);
-                pawn.makeActive();
-                this.randx = Math.floor(Math.random() * game.config.width-100);
-                this.randy = Math.floor(Math.random() * 50);
-                pawn.x = this.randx + 100;
-                pawn.y = this.randy + 10;
-                //console.log(i);
-            }
-            
-
-        }
-        this.empty=false;
-
-    }
-    wave4(){
-        let my = this.my;
-        this.text1.setText("Wave IV : \n ICBM");
-        for(let i = 0; i <= 7; i++){
-            let pawn = my.sprite.pawnGroup.getFirstDead();
-            if(pawn != null){
-                //console.log(pawn);
-                pawn.makeActive();
-                if (i == 0){
-                    pawn.x = game.config.width/6 * 4;
-                    pawn.y = 50;
-                }
-                if (i == 1){
-                    pawn.x = game.config.width/6 * 5;
-                    pawn.y = 150;
-                }
-                if (i == 2){
-                    pawn.x = game.config.width/6 * 5;
-                    pawn.y = 350;
-                }
-                if (i == 3){
-                    pawn.x = game.config.width/6 * 4;
-                    pawn.y = 400;
-                }
-                if (i == 4){
-                    pawn.x = game.config.width/6 * 2;
-                    pawn.y = 400;
-                }
-                if (i == 5){
-                    pawn.x = game.config.width/6 * 1;
-                    pawn.y = 350;
-                }
-                if (i == 6){
-                    pawn.x = game.config.width/6 * 1;
-                    pawn.y = 150;
-                }
-                if (i == 7){
-                    pawn.x = game.config.width/6 * 2;
-                    pawn.y = 50;
-                }
-                //console.log(i);
-            }
-            
-
-        }
-        this.octoKnight.sprite.x = this.knightOctoPath.points[0].x;
-        this.octoKnight.sprite.y = this.knightOctoPath.points[0].y;
-        this.octoKnight.sprite.visible = true;
-        this.octoKnight.sprite.active = true;
-        this.octoKnight.hp = this.octoKnight.maxhp;
-        this.octoKnight.atkCooldownCounter = this.octoKnight.atkCooldown;
-        this.octoKnight.sprite.startFollow({
-           from: 0,
-           to: 1,
-           delay: 0,
-           duration: 10000,
-           ease: 'Sine.easeInOut',
-           repeat: -1,
-           yoyo: false,
-           rotateToPath: false,
-           rotationOffset: -90
-          })
-        this.empty=false;
-
     }
     wave5(){
         let my = this.my;
