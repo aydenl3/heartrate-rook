@@ -24,7 +24,7 @@ class littleRook extends Phaser.Scene {
         this.score = 0;
         this.enemyArray = [];
         this.gameOn = true;
-        this.jitter = false;
+        this.jitter = 1;
         this.jitterCooldownCounter = 0;
         this.jitterCooldown = 10;
         this.heartrate = 60;
@@ -312,40 +312,7 @@ this.enemyArray.push(this.octoKnight);
         let my = this.my;
         this.checkJitter();
         this.decrementCounters();
-        this.enemyShoot();
-        if(this.wave == 5){
-            this.bossAttack0();
-            //console.log(this.Castle.behav);
-            if(this.Castle.behavCooldownCounter <= 0){
-                
-                this.Castle.behavCooldownCounter = this.Castle.behavCooldown;
-                this.Castle.behav = Math.floor(Math.random() * 4);
-                this.pawnSpeed = Math.floor(Math.random() * 3) + 2;
-                //console.log(this.Castle.behav);
-            }
-            if(this.Castle.behav == 1){
-                this.bossAttackStalk();
-            }
-            if(this.Castle.behav == 0){
-                this.bossAttackBurst();
-            }
-            if(this.Castle.behav == 2){
-                this.bossAttackBurst();
-            }
-            if(this.Castle.behav == 3){
-                if(this.Castle.hp <= 5){
-                this.bossAttackCharge();
-                }
-                else(
-                    this.bossAttackStalk()
-                )
-            }
-            if(this.Castle.behav == 4){
-                this.bossAttackRetreat();
-            }
-
-        }
-        
+        this.enemyShoot();        
         if(this.empty == true){
             if(this.wave == 0){
                 this.wave0();
@@ -549,20 +516,104 @@ this.enemyArray.push(this.octoKnight);
         else if (this.heartrate > 60){
             this.heartrate -= 0.2
         }
-        if (this.heartrate <= 80){  
-            this.my.sprite.kingsideCastle.setTexture("chess_knight");
-            //this.my.sprite.kingsideCastle.setTint(0);
+
+        if(this.jitterCooldownCounter <= 0 ){
+            this.jitterCooldownCounter = this.jitterCooldown;
+            
+            if (this.heartrate <= 80){  
+                this.my.sprite.kingsideCastle.setTexture("chess_knight");
+                this.jitter = 1;
+                this.pawnSpeed = 3
+            }
+            else if(this.heartrate <= 100){
+                this.my.sprite.kingsideCastle.setTexture("chess_bishop");
+                this.jitter = 2;
+                this.pawnSpeed = 5
+            }
+            else if (this.heartrate <= 140){
+                this.my.sprite.kingsideCastle.setTexture("chess_rook");
+                this.jitter = 3;
+                this.pawnSpeed = 8
+            }
+            else if (this.heartrate <= 180){
+                this.my.sprite.kingsideCastle.setTexture("chess_queen");
+                this.jitter = 4;
+                this.pawnSpeed = 10;
+            }
         }
-        else if(this.heartrate <= 100){
-            this.my.sprite.kingsideCastle.setTexture("chess_bishop");
+
+        if(this.wave == 5){
+            this.bossAttack0();
+            if(this.Castle.behavCooldownCounter <= 0){
+            
+                this.Castle.behavCooldownCounter = this.Castle.behavCooldown;
+                this.Castle.behav = Math.floor(Math.random() * 4);
+                //this.pawnSpeed = Math.floor(Math.random() * 3) + 2;
+    
+            }
+            if(this.Castle.behav == 1){
+                if (this.jitter == 1){
+                    this.bossAttackBurst();
+                }
+                else if (this.jitter == 2){
+                    this.bossAttackBurst();   
+                }
+                else if (this.jitter == 3){
+                    this.bossAttackBurst();
+                }
+                else if (this.jitter == 4){
+                    this.bossAttackCharge();
+                }
+
+            }
+            if(this.Castle.behav == 0){
+                if (this.jitter == 1){
+                    this.bossAttackStalk();
+                }
+                else if (this.jitter == 2){
+                    this.bossAttackStalk();   
+                }
+                else if (this.jitter == 3){
+                    this.bossAttackBurst();
+                }
+                else if (this.jitter == 4){
+                    this.bossAttackCharge();
+                }
+            }
+            if(this.Castle.behav == 2){
+                if (this.jitter == 1){
+                    this.bossAttackStalk();
+                }
+                else if (this.jitter == 2){
+                    this.bossAttackBurst();   
+                }
+                else if (this.jitter == 3){
+                    this.bossAttackBurst();
+                }
+                else if (this.jitter == 4){
+                    this.bossAttackCharge();
+                }
+            }
+            if(this.Castle.behav == 3){
+                if (this.jitter == 1){
+                    this.bossAttackStalk();
+                }
+                else if (this.jitter == 2){
+                    this.bossAttackStalk();   
+                }
+                else if (this.jitter == 3){
+                    this.bossAttackCharge();
+                }
+                else if (this.jitter == 4){
+                    this.bossAttackCharge();
+                }
+            }
+            if(this.Castle.behav == 4){
+                this.bossAttackRetreat();
+            }
         }
-        else if (this.heartrate <= 140){
-            this.my.sprite.kingsideCastle.setTexture("chess_rook");
-        }
-        else if (this.heartrate <= 180){
-            this.my.sprite.kingsideCastle.setTexture("chess_queen");
-        }
-        console.log(this.my.sprite.kingsideCastle.texture);
+        
+
     }
 
     loseHP(){
@@ -595,6 +646,7 @@ this.enemyArray.push(this.octoKnight);
         this.bulletCooldownCounter--;
         this.waveCount--;
         this.hpCooldownCounter--;
+        this.jitterCooldownCounter--;
         for(let enemy of this.enemyArray){
             enemy.atkCooldownCounter--;
         }
