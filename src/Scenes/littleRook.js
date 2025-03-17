@@ -83,7 +83,7 @@ class littleRook extends Phaser.Scene {
         this.title = this.add.text(200, 200, 'Little Rook\'s Revenge', { font: 'bold 40px Times' });
         this.playText = this.add.text(220, 400, 'Play', { font: 'bold 20px Times' });
         this.creditsText = this.add.text(510, 400, 'Credits', { font: 'bold 20px Times' });
-        this.actualCredits = this.add.text(200, 200, 'Little Rook\'s Revenge\n\n Game by Ayden Le\nAssignment designed by Jim Whitehead\nAssets from Kenny.nl\nSpecial thanks to Alina\n \n\n\n\n\n\n\n\n\n\nAnd Toby I guess...', { font: '22px Times' });
+        this.actualCredits = this.add.text(200, 200, 'Heartrate Rook\n\n Game by Ayden Le, modifed for Game AI class.\nAssets from Kenny.nl\n', { font: '22px Times' });
         this.actualCredits.visible = false;
         
         my.sprite.heart3 = this.add.sprite(70,game.config.height - 90,"suit_hearts");
