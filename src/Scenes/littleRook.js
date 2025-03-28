@@ -26,7 +26,7 @@ class littleRook extends Phaser.Scene {
         this.gameOn = true;
         this.jitter = 1;
         this.jitterCooldownCounter = 0;
-        this.jitterCooldown = 10;
+        this.jitterCooldown = 40;
         this.heartrate = 60;
 
     }
@@ -80,7 +80,7 @@ class littleRook extends Phaser.Scene {
         this.text1 = this.add.text(10, 10, 'Phaser Text with Tint', { font: '20px Times, serif' });
         this.scoretext = this.add.text(0, 520, this.score, { font: '20px Times, serif' });
         this.scoretext.visible = false;
-        this.title = this.add.text(200, 200, 'Little Rook\'s Revenge', { font: 'bold 40px Times' });
+        this.title = this.add.text(200, 200, 'Fear Chess', { font: 'bold 40px Times' });
         this.playText = this.add.text(220, 400, 'Play', { font: 'bold 20px Times' });
         this.creditsText = this.add.text(510, 400, 'Credits', { font: 'bold 20px Times' });
         this.actualCredits = this.add.text(200, 200, 'Heartrate Rook\n\n Game by Ayden Le, modifed for Game AI class.\nAssets from Kenny.nl\n', { font: '22px Times' });
@@ -301,7 +301,7 @@ this.enemyArray.push(this.octoKnight);
         my.sprite.pawnGroup.propertyValueSet("pew", false);
 
         // update HTML description
-        document.getElementById('description').innerHTML = '<h2>Little Rook\'s Revenge'
+        document.getElementById('description').innerHTML = '<h2>Fear Chess'
         //console.log(my.sprite.bulletGroup);
         //console.log(my.sprite.bulletGroup.children);
         //console.log(my.sprite.bulletGroup.children.entries);
@@ -511,34 +511,34 @@ this.enemyArray.push(this.octoKnight);
 
     checkJitter(){
         if (Phaser.Input.Keyboard.JustDown(this.left) || Phaser.Input.Keyboard.JustDown(this.right) || Phaser.Input.Keyboard.JustDown(this.space)){
-            this.heartrate += 5
+            this.heartrate += 4
         }
-        else if (this.heartrate > 60){
+        else if (this.heartrate >= 60){
             this.heartrate -= 0.2
         }
 
-        if(this.jitterCooldownCounter <= 0 ){
+        if(this.jitterCooldownCounter <= 0 && this.Castle.sprite.y < 60){
             this.jitterCooldownCounter = this.jitterCooldown;
             
-            if (this.heartrate <= 80){  
+            if (this.heartrate <= 70){  
                 this.my.sprite.kingsideCastle.setTexture("chess_knight");
                 this.jitter = 1;
                 this.pawnSpeed = 3
             }
-            else if(this.heartrate <= 100){
+            else if(this.heartrate <= 80){
                 this.my.sprite.kingsideCastle.setTexture("chess_bishop");
                 this.jitter = 2;
                 this.pawnSpeed = 5
             }
-            else if (this.heartrate <= 140){
+            else if (this.heartrate <= 90){
                 this.my.sprite.kingsideCastle.setTexture("chess_rook");
-                this.jitter = 3;
+                this.jitter = 4;
                 this.pawnSpeed = 8
             }
-            else if (this.heartrate <= 180){
+            else if (this.heartrate > 100){
                 this.my.sprite.kingsideCastle.setTexture("chess_queen");
-                this.jitter = 4;
-                this.pawnSpeed = 10;
+                this.jitter = 3;
+                this.pawnSpeed = 20;
             }
         }
 
@@ -548,7 +548,7 @@ this.enemyArray.push(this.octoKnight);
             
                 this.Castle.behavCooldownCounter = this.Castle.behavCooldown;
                 this.Castle.behav = Math.floor(Math.random() * 4);
-                //this.pawnSpeed = Math.floor(Math.random() * 3) + 2;
+                console.log("HRM Detected: " + Math.floor(this.heartrate))
     
             }
             if(this.Castle.behav == 1){
@@ -734,6 +734,7 @@ this.enemyArray.push(this.octoKnight);
         this.my.sprite.heart3.visible = true;
         this.scoretext.visible = true;
         this.scoretext.setText(this.score);
+        this.heartrate = 60;
 
     }
     Title(){
@@ -744,7 +745,7 @@ this.enemyArray.push(this.octoKnight);
        this.gameOn = true;
        this.my.sprite.rook.visible = true;
        this.title.visible = true;
-       this.title.setText("Little Rook\'s Revenge");
+       this.title.setText("Fear Chess");
        this.playText.visible = true;
        this.creditsText.visible = true;
        this.my.sprite.startButton.visible = true;
@@ -832,7 +833,7 @@ this.enemyArray.push(this.octoKnight);
     }
     wave5(){
         let my = this.my;
-        this.text1.setText("Wave V : \n Boss: King Side Castle");
+        this.text1.setText("Encounter: \n Promoted Pawn");
         for(let i = 0; i <= 1; i++){
             let pawn = my.sprite.pawnGroup.getFirstDead();
             if(pawn != null){
